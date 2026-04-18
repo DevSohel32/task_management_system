@@ -61,32 +61,32 @@
     </nav>
 
     <div class="px-6 lg:px-10 pb-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Tasks</p>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-[#2563EB]">                 </span>
+                    <span class="text-3xl font-bold text-[#2563EB]">{{ $totalTasks }}</span>
                     <span class="text-xs text-slate-400 font-medium">This sprint</span>
                 </div>
             </div>
             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">In Progress</p>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-blue-500">                   </span>
+                    <span class="text-3xl font-bold text-blue-500">{{ $totalInProgressTasks }}</span>
                     <span class="text-xs text-slate-400 font-medium text-success">Active now</span>
                 </div>
             </div>
             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Completed</p>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-emerald-500">                  </span>
+                    <span class="text-3xl font-bold text-emerald-500">{{ $totalCompletedTasks }}</span>
                     <span class="text-xs text-slate-400 font-medium">Done</span>
                 </div>
             </div>
             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pending</p>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-orange-400">              </span>
+                    <span class="text-3xl font-bold text-orange-400">{{ $totalPendingTasks }}</span>
                     <span class="text-xs text-slate-400 font-medium">Awaiting start</span>
                 </div>
             </div>
