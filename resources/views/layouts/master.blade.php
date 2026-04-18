@@ -8,8 +8,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link rel="stylesheet" href="{{ asset('dist-front/css/style.css') }}">
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-[#F8FAFC]">
@@ -22,8 +20,6 @@
             @yield('content')
         </main>
     </div>
-
-
 
     @stack('scripts')
 </body>
