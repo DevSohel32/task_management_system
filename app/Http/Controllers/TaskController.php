@@ -27,4 +27,12 @@ class TaskController extends Controller
         $task = Task::create($data);
         return redirect()->back()->with('success', 'Task created successfully!');
     }
+
+    public function task_update(StoreTaskRequest $request, $id){
+        $data=$request->validated();
+        $task = Task::findOrFail($id);
+        $task->update($data);
+        return redirect()->back()->with('success', 'Task updated successfully!');
+    }
+
 }

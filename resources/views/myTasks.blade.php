@@ -61,7 +61,7 @@
     </nav>
 
     <div class="px-6 lg:px-10 pb-10">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Tasks</p>
                 <div class="flex items-baseline gap-2">
@@ -103,18 +103,284 @@
         </div>
 
 
+        {{-- task board items --}}
+        <div id="board-view" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            @if ($tasks->isEmpty())
+                <div
+                    class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
+                    <div class="bg-slate-50 p-4 rounded-full mb-4">
+                        <i class="fa-solid fa-clipboard-list text-4xl text-slate-300"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-700">You have not created any tasks yet</h3>
+                    <p class="text-slate-500 mb-6">Start organizing your work by creating your first task.</p>
+                    <button onclick="add_task_modal.showModal()"
+                        class="btn bg-blue-600 hover:bg-blue-700 text-white border-none px-6">
+                        <i class="fa-solid fa-plus mr-2"></i> Create Task
+                    </button>
+                </div>
+            @else
+                @php
+                    $statuses = [
+                        'pending' => ['label' => 'Pending', 'color' => 'bg-slate-400'],
+                        'in_progress' => ['label' => 'In Progress', 'color' => 'bg-blue-500'],
+                        'completed' => ['label' => 'Completed', 'color' => 'bg-emerald-500'],
+                    ];
+                @endphp
+
+                @foreach ($statuses as $key => $status)
+                    <div class="bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-4 w-full space-y-4">
+
+                        <div class="flex justify-between items-center px-1 mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full {{ $status['color'] }}"></span>
+                                <span class="font-bold text-sm text-slate-700">{{ $status['label'] }}</span>
+                                <span class="text-slate-400 text-xs font-bold ml-1">
+                                    {{ $tasks->where('status', $key)->count() }}
+                                </span>
+                            </div>
+                            <button onclick="add_task_modal.showModal()"
+                                class="btn btn-xs btn-ghost border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 rounded-lg p-0 h-7 w-7 flex items-center justify-center">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+
+                        @foreach ($tasks->where('status', $key) as $task)
+                            <div
+                                class="group relative bg-white p-4 rounded-2xl border-2 border-blue-200 shadow-sm transition-all cursor-pointer">
+
+                                <div
+                                    class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    @if ($task->status !== 'completed')
+                                        {{-- Edit Trigger Label --}}
+                                        <label for="task-edit-{{ $task->id }}"
+                                            class="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 cursor-pointer">
+                                            <i class="fa-solid fa-pen text-[10px]"></i>
+                                        </label>
+                                    @endif
+
+                                    {{-- Modal for Editing Task --}}
+                                    <input type="checkbox" id="task-edit-{{ $task->id }}" class="modal-toggle" />
+                                    <div class="modal" role="dialog">
+                                        <div class="modal-box p-0 max-w-xl bg-white rounded-2xl overflow-hidden shadow-2xl">
+                                            <div class="flex justify-between items-center p-6 border-b border-slate-100">
+                                                <h3 class="font-bold text-xl text-slate-800">Edit Task</h3>
+                                                <label for="task-edit-{{ $task->id }}"
+                                                    class="btn btn-sm btn-circle btn-ghost">✕</label>
+                                            </div>
+                                            <form action="{{ route('my_task_update', $task->id) }}" method="POST"
+                                                class="p-8 space-y-6">
+                                                @csrf
+                                                @method('PUT')
+
+                                                <div>
+                                                    <label class="block text-sm font-bold text-slate-700 mb-2">Task title
+                                                        <span class="text-red-500">*</span></label>
+                                                    <input type="text" name="title"
+                                                        value="{{ old('title', $task->title) }}"
+                                                        class="input input-bordered w-full bg-[#F8FAFC] border-slate-200 focus:ring-2 focus:ring-blue-500 transition-all"
+                                                        required />
+                                                </div>
+
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                                                    <textarea name="description" class="textarea textarea-bordered w-full h-28 bg-[#F8FAFC] border-slate-200">{{ old('description', $task->description) }}</textarea>
+                                                </div>
+
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-bold text-slate-700 mb-2">Status</label>
+                                                        <select name="status"
+                                                            class="select select-bordered w-full bg-[#F8FAFC] border-slate-200">
+                                                            <option value="pending"
+                                                                {{ $task->status == 'pending' ? 'selected' : '' }}>
+                                                                Pending</option>
+                                                            <option value="in_progress"
+                                                                {{ $task->status == 'in_progress' ? 'selected' : '' }}>In
+                                                                Progress</option>
+                                                            <option value="completed"
+                                                                {{ $task->status == 'completed' ? 'selected' : '' }}>
+                                                                Completed</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-sm font-bold text-slate-700 mb-2">Due
+                                                            Date</label>
+                                                        <input type="date" name="due_date"
+                                                            value="{{ old('due_date', $task->due_date ? $task->due_date->format('Y-m-d') : '') }}"
+                                                            class="input input-bordered w-full bg-[#F8FAFC] border-slate-200" />
+                                                    </div>
+                                                </div>
 
 
 
+                                                <div class="flex justify-end gap-3 pt-6 border-t border-slate-100">
+                                                    <label for="task-edit-{{ $task->id }}"
+                                                        class="btn btn-ghost px-6 cursor-pointer">Cancel</label>
+                                                    <button type="submit"
+                                                        class="btn bg-[#2563EB] hover:bg-blue-700 text-white border-none px-10">
+                                                        Update Task
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <label class="modal-backdrop" for="task-edit-{{ $task->id }}">Close</label>
+                                    </div>
+                                    <form id="delete-form-{{ $task->id }}"
+                                        action="             " method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" onclick="confirmDelete({{ $task->id }})"
+                                            class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
+                                            <i class="fa-solid fa-trash text-[10px]"></i>
+                                        </button>
+                                    </form>
+                                </div>
 
+                                <label for="task-modal-{{ $task->id }}" class="cursor-pointer">
+                                    <h3
+                                        class="font-bold text-lg mb-1 hover:text-blue-600 transition-colors {{ $task->status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-800' }}">
+                                        {{ $task->title }}
+                                    </h3>
+                                </label>
+                                {{-- modal for viewing task details --}}
+                                <input type="checkbox" id="task-modal-{{ $task->id }}" class="modal-toggle" />
+                                <div class="modal" role="dialog">
+                                    <div class="modal-box bg-white max-w-2xl">
+                                        <div class="flex justify-between items-start border-b pb-4 mb-4">
+                                            <h3 class="text-xl font-bold text-slate-800">{{ $task->title }}</h3>
+                                            <label for="task-modal-{{ $task->id }}"
+                                                class="btn btn-sm btn-circle btn-ghost">✕</label>
+                                        </div>
 
+                                        <div class="space-y-4">
+                                            <div class="flex gap-2">
+                                                <span
+                                                    class="px-3 py-1 rounded-full text-xs font-bold {{ $task->status == 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700' }}">
+                                                    Status: {{ ucfirst(str_replace('_', ' ', $task->status)) }}
+                                                </span>
+                                                <span
+                                                    class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">
+                                                    Priority:
+                                                    @php
+                                                        $priority = 'low';
+                                                        if ($task->due_date) {
+                                                            $today = \Carbon\Carbon::today()->day;
+                                                            $due_date = \Carbon\Carbon::parse($task->due_date)->day;
+                                                            $diff = $due_date - $today;
+                                                            if ($diff >= 0 && $diff <= 3) {
+                                                                $priority = 'high';
+                                                            } elseif ($diff >= 4 && $diff <= 5) {
+                                                                $priority = 'medium';
+                                                            } else {
+                                                                $priority = 'low';
+                                                            }
+                                                        }
+                                                    @endphp
 
+                                                    {{-- Design onujayi priority show kora --}}
+                                                    @if ($priority === 'high')
+                                                        <span class="text-red-600">High</span>
+                                                    @elseif ($priority === 'medium')
+                                                        <span class="text-yellow-600">Medium</span>
+                                                    @else
+                                                        <span class="text-green-600">Low</span>
+                                                    @endif
+                                                </span>
+                                            </div>
 
+                                            <div>
+                                                <h4 class="text-sm font-semibold text-slate-600 mb-1">Description:</h4>
+                                                <p class="text-slate-500 text-sm leading-relaxed">
+                                                    {{ $task->description ?? 'No description provided.' }}
+                                                </p>
+                                            </div>
 
+                                            <div class="pt-4 border-t flex justify-between text-xs text-slate-400">
+                                                <span>Created: {{ $task->created_at->format('M d, Y h:i A') }}</span>
+                                                <span>Last Updated: {{ $task->updated_at->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
 
+                                        <div class="modal-action">
+                                            <label for="task-modal-{{ $task->id }}"
+                                                class="btn btn-primary text-white">Close</label>
+                                        </div>
+                                    </div>
+                                    <label class="modal-backdrop" for="task-modal-{{ $task->id }}">Close</label>
+                                </div>
 
+                                <p class="text-[13px] text-slate-500 mb-4 line-clamp-2">{{ $task->description }}</p>
 
+                                <div class="mb-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">Status</label>
+                                        <select name="status"
+                                            class="status-select select select-bordered w-full bg-[#F8FAFC] border-slate-200"
+                                            data-id="{{ $task->id }}">
+                                            <option value="pending" {{ $task->status == 'pending' ? 'selected' : '' }}>
+                                                Pending</option>
+                                            <option value="in_progress"
+                                                {{ $task->status == 'in_progress' ? 'selected' : '' }}>In Progress
+                                            </option>
+                                            <option value="completed"
+                                                {{ $task->status == 'completed' ? 'selected' : '' }}>Completed
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
 
+                                <div class="flex justify-between items-center mt-2">
+                                    <div class="flex items-center gap-1 text-slate-400">
+                                        <i class="fa-regular fa-calendar text-[11px]"></i>
+                                        <span class="text-[11px] font-medium">
+                                            Due: {{ $task->due_date ? $task->due_date->format('d M') : 'No Date' }}
+                                        </span>
+                                    </div>
+
+                                    @php
+                                        $priority = 'low';
+                                        if ($task->due_date) {
+                                            $today = \Carbon\Carbon::today()->day;
+                                            $due_date = \Carbon\Carbon::parse($task->due_date)->day;
+                                            $diff = $due_date - $today;
+                                            if ($diff >= 0 && $diff <= 3) {
+                                                $priority = 'high';
+                                            } elseif ($diff >= 4 && $diff <= 5) {
+                                                $priority = 'medium';
+                                            } else {
+                                                $priority = 'low';
+                                            }
+                                        }
+                                    @endphp
+
+                                    {{-- Design onujayi priority show kora --}}
+                                    @if ($priority === 'high')
+                                        <span
+                                            class="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                            <i class="fa-solid fa-angles-up"></i> High
+                                        </span>
+                                    @elseif ($priority === 'medium')
+                                        <span
+                                            class="text-[11px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                            <i class="fa-solid fa-equals"></i> Medium
+                                        </span>
+                                    @else
+                                        <span
+                                            class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                            <i class="fa-solid fa-angles-down"></i> Low
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+            @endif
+
+        </div>
 
 
 
@@ -156,14 +422,17 @@
                             <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress
                             </option>
-                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed
+                            </option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Due Date</label>
                         <input type="date" name="due_date" value="{{ old('due_date') }}"
                             class="input input-bordered w-full bg-[#F8FAFC] border-slate-200 @error('due_date') border-red-500 @enderror" />
-                        @error('due_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('due_date')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -213,7 +482,7 @@
                 }
             })
         }
-        @if(session('success'))
+        @if (session('success'))
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
@@ -223,17 +492,17 @@
         @endif
 
 
-        @if($errors->any())
+        @if ($errors->any())
             Swal.fire({
                 icon: 'error',
                 title: 'Validation Error',
                 html: `
-                                        <ul style="text-align: left;">
-                                            @foreach($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    `,
+                                                <ul style="text-align: left;">
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            `,
                 confirmButtonColor: '#2563EB',
             });
 
@@ -268,7 +537,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             @if ($errors->any())
                 const modal = document.getElementById('add_task_modal');
@@ -280,14 +549,14 @@
         });
 
         document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', function () {
+            select.addEventListener('change', function() {
                 let taskId = this.getAttribute('data-id');
                 let newStatus = this.value;
 
 
                 axios.patch(`/tasks/${taskId}/update-status`, {
-                    status: newStatus
-                })
+                        status: newStatus
+                    })
                     .then(response => {
 
                         const Toast = Swal.mixin({
@@ -321,44 +590,43 @@
             });
         });
         document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
+            checkbox.addEventListener('change', function() {
                 if (this.checked) {
                     let taskId = this.getAttribute('data-id');
                     let newStatus = 'completed';
 
                     axios.patch(`/tasks/${taskId}/update-status`, {
-                        status: newStatus
-                    })
-                    .then(response => {
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true
-                        });
+                            status: newStatus
+                        })
+                        .then(response => {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
 
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Task marked as completed!'
-                        });
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Task marked as completed!'
+                            });
 
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        this.checked = false;
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Could not update task status.',
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            this.checked = false;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Could not update task status.',
+                            });
                         });
-                    });
                 }
             });
         });
-
     </script>
 @endpush
