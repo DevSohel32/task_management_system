@@ -672,7 +672,7 @@
                 let newStatus = this.value;
 
 
-                axios.patch(`/tasks/${taskId}/update-status`, {
+                axios.patch(`/my-status-update/${taskId}`, {
                         status: newStatus
                     })
                     .then(response => {
@@ -713,7 +713,7 @@
                     let taskId = this.getAttribute('data-id');
                     let newStatus = 'completed';
 
-                    axios.patch(`/tasks/${taskId}/update-status`, {
+                    axios.patch(`/my-status-update/${taskId}`, {
                             status: newStatus
                         })
                         .then(response => {

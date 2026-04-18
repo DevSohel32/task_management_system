@@ -52,8 +52,8 @@
 
                     <div class="space-y-4">
                         <div class="form-control">
-                            <label class="label"><span class="label-text font-bold text-slate-600">Full Name</span></label>
-                            <input type="text" name="name" placeholder="John Doe"
+                            <label class="label"><span class="label-text font-bold text-slate-600">Email</span></label>
+                            <input type="email" name="email" placeholder="john@example.com"
                                 class="input input-bordered input-primary w-full bg-white/50 focus:shadow-lg transition-all rounded-2xl @error('email') border-red-500 @enderror" />
                                 @error('email')
                             <span class="text-red-500 text-xs mt-1">{{ $message }}</span>

@@ -10,7 +10,7 @@
                 </svg>
             </div>
             <div>
-                <span class="text-white font-bold text-xl block leading-none">Q-Manager</span>
+                <span class="text-white font-bold text-xl block leading-none">Task Flow</span>
                 <span class="text-[10px] uppercase tracking-widest opacity-40">Workspace</span>
             </div>
         </div>
@@ -20,7 +20,7 @@
                    <i class="fa-solid fa-chart-simple"></i>
                     Dashboard</a>
             </li>
-            <li><a href="" class="flex items-center gap-3 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ Request::is('all-tasks') ? 'active' : '' }}">
+            <li><a href="{{ route('all_tasks') }}" class="flex items-center gap-3 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ Request::is('all-tasks') ? 'active' : '' }}">
                     <i class="fa-solid fa-bars"></i>
                     All Tasks</a>
             </li>
