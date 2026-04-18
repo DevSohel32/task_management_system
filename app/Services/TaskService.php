@@ -38,5 +38,20 @@ class TaskService
             ]
         ];
     }
-   
+    public function getTaskReportData()
+    {
+        $tasks = Task::with('user')->get();
+        $total = $tasks->count();
+        $completed = $tasks->where('status', 'completed')->count();
+        $pending = $tasks->where('status', 'pending')->count();
+        $completionRate = $total > 0 ? round(($completed / $total) * 100, 2) : 0;
+
+        return [
+            'tasks' => $tasks,
+            'total' => $total,
+            'completed' => $completed,
+            'pending' => $pending,
+            'completionRate' => $completionRate
+        ];
+    }
 }

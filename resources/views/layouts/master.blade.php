@@ -8,18 +8,22 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link rel="stylesheet" href="{{ asset('dist-front/css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-[#F8FAFC]">
     <div class="drawer lg:drawer-open">
         <input id="my-drawer" type="checkbox" class="drawer-toggle" />
 
-        @include('layouts.sidebar')
+         @include('layouts.sidebar')
 
         <main class="drawer-content flex flex-col min-h-screen">
             @yield('content')
         </main>
     </div>
+
+
 
     @stack('scripts')
 </body>

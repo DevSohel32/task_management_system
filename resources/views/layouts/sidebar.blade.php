@@ -1,4 +1,4 @@
-<div class="drawer-side">
+<aside class="drawer-side z-64">
     <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
     <div class="menu p-4 w-64 min-h-full bg-[#0F172A] text-slate-400 flex flex-col">
         <div class="flex items-center gap-3 px-4 py-8 mb-4">
@@ -42,4 +42,4 @@
             </div>
         </div>
     </div>
-</div>
+</aside>
