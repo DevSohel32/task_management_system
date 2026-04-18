@@ -20,11 +20,11 @@
                    <i class="fa-solid fa-chart-simple"></i>
                     Dashboard</a>
             </li>
-            <li><a href="{{ route('all.tasks') }}" class="flex items-center gap-3 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ Request::is('all-tasks') ? 'active' : '' }}">
+            <li><a href="" class="flex items-center gap-3 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ Request::is('all-tasks') ? 'active' : '' }}">
                     <i class="fa-solid fa-bars"></i>
                     All Tasks</a>
             </li>
-            <li><a href="{{ route('my.tasks') }}" class="flex items-center gap-3 py-3 rounded-lg {{ Request::is('my-tasks') ? 'active' : '' }}">
+            <li><a href="{{ route('my_tasks') }}" class="flex items-center gap-3 py-3 rounded-lg {{ Request::is('my-tasks') ? 'active' : '' }}">
                     <i class="fa-regular fa-user"></i>
                     My Tasks</a>
             </li>
