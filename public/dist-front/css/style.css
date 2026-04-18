@@ -1,0 +1,48 @@
+
+        body {
+            max-width: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            overflow-x: hidden;
+        }
+
+        .active {
+            background-color: #2563EB !important;
+            color: white !important;
+        }
+
+        .list-item-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+
+        .list-item-row:hover .list-item-actions {
+            opacity: 1;
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            background-color: rgb(255, 255, 255);
+            border-bottom: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            margin-left: -1.5rem;
+            margin-right: -1.5rem;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+            z-index: 2;
+        }
+    .list-item-row .list-item-actions {
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+    .list-item-row:hover .list-item-actions {
+        opacity: 1;
+    }
+
+    .list-item-row:hover {
+        background-color: #F1F5F9 !important;
+    }
+
