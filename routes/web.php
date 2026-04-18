@@ -16,7 +16,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-tasks', [TaskController::class, 'index'])->name('my_tasks');
     Route::post('/my-tasks/store', [TaskController::class, 'task_store'])->name('my_task_store');
     Route::put('/tasks-update/{id}', [TaskController::class, 'task_update'])->name('my_task_update');
-    Route::get('/all-tasks', [TaskController::class, 'allTasks'])->name('all.tasks');
+    Route::delete('/tasks-destroy/{id}', [TaskController::class, 'task_destroy'])->name('my_task_destroy');
+    Route::patch('/tasks/{id}/update-status', [TaskController::class, 'status_update'])->name('task.updateStatus');
 });
 
 require __DIR__.'/auth.php';

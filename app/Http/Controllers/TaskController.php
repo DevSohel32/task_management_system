@@ -25,14 +25,25 @@ class TaskController extends Controller
         $data=$request->validated();
         $data['user_id']=Auth::user()->id;
         $task = Task::create($data);
-        return redirect()->back()->with('success', 'Task created successfully!');
+        return with('success', 'Task created successfully!');
     }
 
     public function task_update(StoreTaskRequest $request, $id){
         $data=$request->validated();
         $task = Task::findOrFail($id);
         $task->update($data);
-        return redirect()->back()->with('success', 'Task updated successfully!');
+        return with('success', 'Task updated successfully!');
+    }
+    public function task_destroy($id){
+        $task = Task::findOrFail($id);
+        $task->delete();
+        return with('success', 'Task deleted successfully!');
     }
 
+    public function status_update($id){
+        $task = Task::findOrFail($id);
+        $task->status = $task->status === 'completed' ? 'pending' : 'completed';
+        $task->save();
+        return with('success', 'Task status updated successfully!');
+    }
 }

@@ -229,7 +229,7 @@
                                         <label class="modal-backdrop" for="task-edit-{{ $task->id }}">Close</label>
                                     </div>
                                     <form id="delete-form-{{ $task->id }}"
-                                        action="             " method="POST">
+                                        action="{{ route('my_task_destroy', $task->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" onclick="confirmDelete({{ $task->id }})"
@@ -382,7 +382,125 @@
 
         </div>
 
+        {{-- List items --}}
+        <div id="list-view" class="flex flex-col w-full hidden">
+            @foreach ($tasks as $task)
+                <div
+                    class="list-item-row grid grid-cols-[40px,1fr,120px,80px,80px,100px] items-center gap-4 px-6 py-4 border-b border-slate-50 transition-all cursor-pointer bg-white">
 
+                    @if ($task->status === 'completed')
+                        <div class="flex items-center justify-center">
+                            <div class="w-5 h-5 bg-emerald-500 rounded flex items-center justify-center text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex items-center justify-center">
+                            <input type="checkbox" class="task-checkbox rounded border-slate-200"
+                                data-id="{{ $task->id }}" />
+                        </div>
+                    @endif
+
+
+
+
+
+
+
+
+
+
+                    <div class="flex flex-col min-w-0">
+                        @if ($task->status === 'completed')
+                            <h3 class="text-sm font-semibold text-slate-400 line-through">{{ $task->title }}</h3>
+                        @else
+                            <h3 class="text-sm font-semibold text-slate-800 truncate">{{ $task->title }}</h3>
+                        @endif
+                        <p class="text-xs text-slate-400 truncate">{{ $task->description }}</p>
+                    </div>
+
+                    <div class="flex justify-start">
+                        @if ($task->status === 'completed')
+                            <span
+                                class="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 px-3 py-1 rounded-full w-28 whitespace-nowrap">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Completed
+                            </span>
+                        @elseif ($task->status === 'in_progress')
+                            <span
+                                class="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 px-3 py-1 rounded-full w-28 whitespace-nowrap">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> In Progress
+                            </span>
+                        @else
+                            <span
+                                class="flex items-center gap-1.5 text-[10px] font-bold text-orange-600  px-3 py-1 rounded-full w-28 whitespace-nowrap">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> Pending
+                            </span>
+                        @endif
+                    </div>
+
+                    <div>
+                        @php
+                            $priority = 'low';
+                            if ($task->due_date) {
+                                $today = \Carbon\Carbon::today()->day;
+                                $due_date = \Carbon\Carbon::parse($task->due_date)->day;
+                                $diff = $due_date - $today;
+                                if ($diff >= 0 && $diff <= 3) {
+                                    $priority = 'high';
+                                } elseif ($diff >= 4 && $diff <= 5) {
+                                    $priority = 'medium';
+                                } else {
+                                    $priority = 'low';
+                                }
+                            }
+                        @endphp
+
+                        {{-- Design onujayi priority show kora --}}
+                        @if ($priority === 'high')
+                            <span
+                                class="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                <i class="fa-solid fa-angles-up"></i> High
+                            </span>
+                        @elseif ($priority === 'medium')
+                            <span
+                                class="text-[11px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                <i class="fa-solid fa-equals"></i> Medium
+                            </span>
+                        @else
+                            <span
+                                class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                <i class="fa-solid fa-angles-down"></i> Low
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="text-xs text-slate-400 font-medium text-center">
+                        {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d M') : 'No due date' }}</div>
+
+                    <div class="list-item-actions flex items-center justify-end gap-2">
+                        @if ($task->status !== 'completed')
+                            <button class="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                            </button>
+                        @endif
+                        <button class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
 
 
     </div>
@@ -397,7 +515,7 @@
                 </form>
             </div>
 
-            <form action=" {{ route('my_task_store') }}       " method="POST" class="p-8 space-y-6">
+            <form action="{{ route('my_task_store') }}" method="POST" class="p-8 space-y-6">
                 @csrf
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">
@@ -497,12 +615,12 @@
                 icon: 'error',
                 title: 'Validation Error',
                 html: `
-                                                <ul style="text-align: left;">
-                                                    @foreach ($errors->all() as $error)
-                                                        <li>{{ $error }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            `,
+                                        <ul style="text-align: left;">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    `,
                 confirmButtonColor: '#2563EB',
             });
 
